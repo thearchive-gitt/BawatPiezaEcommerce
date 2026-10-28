@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="760" viewBox="0 0 900 760" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="120" y1="50" x2="780" y2="760" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E9E5D9"/><stop offset="1" stop-color="#C9C4B6"/>
+    </linearGradient>
+    <linearGradient id="tile" x1="250" y1="180" x2="665" y2="520" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#515B5A"/><stop offset="1" stop-color="#202827"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="256" y1="450" x2="590" y2="650" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A58155"/><stop offset="1" stop-color="#5F4935"/>
+    </linearGradient>
+    <filter id="shadow" x="125" y="130" width="690" height="570" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="25"/>
+    </filter>
+    <filter id="energyGlow" x="345" y="250" width="260" height="230" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+  </defs>
+  <path fill="url(#bg)" d="M0 0h900v760H0z"/>
+  <path fill="#46413A" fill-opacity=".26" filter="url(#shadow)" d="m477 205 270 145-309 183-270-145 309-183Z"/>
+  <path fill="url(#edge)" d="m196 383 276-164 300 160v46L475 604 196 452v-69Z"/>
+  <path fill="#303736" d="m196 383 276-164 300 160-297 177-279-173Z"/>
+  <path stroke="#B49970" stroke-width="4" d="m230 384 242-143 258 138-256 153-244-148Z"/>
+  <path stroke="#7D8D87" stroke-opacity=".72" stroke-width="3" d="m272 383 201-118 213 114-212 128-202-124Z"/>
+  <path stroke="#899B92" stroke-opacity=".55" stroke-width="2" d="m309 382 164-97 174 94-173 104-165-101Z"/>
+  <ellipse cx="472" cy="362" fill="#FF8A35" fill-opacity=".72" filter="url(#energyGlow)" rx="71" ry="48"/>
+  <path fill="#B7965F" d="m472 300 66 38v10l-66 39-66-38v-11l66-38Z"/>
+  <path fill="#F1AA62" d="m406 338 66 38v11l-66-38v-11Z"/>
+  <path fill="#B56831" d="m472 376 66-38v10l-66 39v-11Z"/>
+  <path fill="#302B24" stroke="#F0A04B" stroke-width="3" d="m471 333 31 18v34l-31 18-31-18v-34l31-18Z"/>
+  <path stroke="#FFC27A" stroke-width="3" d="M440 351v34m62-34v34"/>
+  <circle cx="471" cy="367" r="9" fill="#FFD29A"/>
+  <circle cx="242" cy="389" r="7" fill="#D0B67F"/><circle cx="680" cy="387" r="7" fill="#D0B67F"/>
+  <path fill="#EEE6D7" d="M70 91h760v1H70z"/>
+  <text x="72" y="125" fill="#4B514C" font-family="Arial,sans-serif" font-size="15" letter-spacing="4">BAWAT PIEZA  /  KINETIC ENERGY SYSTEMS</text>
+  <text x="72" y="710" fill="#4B514C" font-family="Arial,sans-serif" font-size="13" letter-spacing="3">PIEZOELECTRIC + DYNAMO FLOOR TILE</text>
+</svg>

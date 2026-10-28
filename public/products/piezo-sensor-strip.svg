@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="760" viewBox="0 0 900 760" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="80" y1="65" x2="800" y2="730" gradientUnits="userSpaceOnUse"><stop stop-color="#E8E4D9"/><stop offset="1" stop-color="#C9C4B7"/></linearGradient>
+    <linearGradient id="strip" x1="235" y1="300" x2="665" y2="470" gradientUnits="userSpaceOnUse"><stop stop-color="#697F75"/><stop offset="1" stop-color="#35483F"/></linearGradient>
+    <filter id="shadow" x="120" y="210" width="690" height="390" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feGaussianBlur stdDeviation="23"/></filter>
+  </defs>
+  <path fill="url(#bg)" d="M0 0h900v760H0z"/>
+  <path fill="#34332E" fill-opacity=".2" filter="url(#shadow)" d="m490 293 240 140-310 185-240-140 310-185Z"/>
+  <path fill="#313A36" stroke="#B59A6D" stroke-width="5" d="m226 389 253-151 260 148-259 155-254-152Z"/>
+  <path fill="url(#strip)" stroke="#D0BB88" stroke-width="4" d="m279 386 200-119 203 116-202 122-201-119Z"/>
+  <path stroke="#DED2B0" stroke-width="3" stroke-dasharray="9 12" d="m307 386 172-102 174 99-173 105-173-102Z"/>
+  <rect x="369" y="349" width="220" height="73" rx="15" fill="#AEB8AC" stroke="#E4D2A6" stroke-width="5" transform="rotate(-1 369 349)"/>
+  <path stroke="#6B7F72" stroke-width="8" stroke-linecap="round" d="m398 386 27-16 27 16 27-16 27 16 27-16 26 16"/>
+  <path stroke="#BBAB7B" stroke-width="5" stroke-linecap="round" d="m226 388-77-45m590 42 65 37"/>
+  <circle cx="149" cy="343" r="8" fill="#C7A66C"/><circle cx="804" cy="422" r="8" fill="#C7A66C"/>
+  <text x="72" y="125" fill="#4B514C" font-family="Arial,sans-serif" font-size="15" letter-spacing="4">BAWAT PIEZA  /  PIEZO COMPONENT</text>
+  <text x="72" y="710" fill="#4B514C" font-family="Arial,sans-serif" font-size="13" letter-spacing="3">FLEXIBLE PRESSURE + VIBRATION SENSOR</text>
+</svg>

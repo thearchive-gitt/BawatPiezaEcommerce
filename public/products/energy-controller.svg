@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="760" viewBox="0 0 900 760" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="100" y1="40" x2="780" y2="720" gradientUnits="userSpaceOnUse"><stop stop-color="#E9E5DA"/><stop offset="1" stop-color="#C7C4B8"/></linearGradient>
+    <linearGradient id="board" x1="285" y1="220" x2="635" y2="540" gradientUnits="userSpaceOnUse"><stop stop-color="#587161"/><stop offset="1" stop-color="#263A32"/></linearGradient>
+    <filter id="shadow" x="140" y="140" width="650" height="560" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feGaussianBlur stdDeviation="25"/></filter>
+  </defs>
+  <path fill="url(#bg)" d="M0 0h900v760H0z"/>
+  <path fill="#34332E" fill-opacity=".22" filter="url(#shadow)" d="m470 201 262 152-296 176-262-152 296-176Z"/>
+  <path fill="#202C26" d="m214 370 257-153 277 151-267 160-267-158Z"/>
+  <path fill="url(#board)" stroke="#C4A66F" stroke-width="5" d="m260 367 211-125 228 124-219 131-220-130Z"/>
+  <rect x="359" y="319" width="133" height="88" rx="5" fill="#27352F" stroke="#D1BD87" stroke-width="5"/>
+  <path stroke="#D1BD87" stroke-width="4" d="M378 340h95m-95 17h95m-95 17h95m-95 17h95"/>
+  <rect x="531" y="321" width="79" height="44" rx="4" fill="#1E2A25" stroke="#B9A574" stroke-width="4"/>
+  <path fill="#C8AA6A" d="M550 335h41v16h-41z"/>
+  <circle cx="305" cy="356" r="10" fill="#DEBD69"/><circle cx="324" cy="356" r="10" fill="#819B77"/>
+  <circle cx="317" cy="409" r="7" fill="#D5C28D"/><circle cx="620" cy="369" r="7" fill="#D5C28D"/>
+  <path stroke="#D4BD82" stroke-width="4" stroke-linecap="round" d="m300 392 35-21m139 55 31-19m-86-97 27-17m86 121 35-22"/>
+  <text x="72" y="125" fill="#4B514C" font-family="Arial,sans-serif" font-size="15" letter-spacing="4">BAWAT PIEZA  /  POWER MANAGEMENT</text>
+  <text x="72" y="710" fill="#4B514C" font-family="Arial,sans-serif" font-size="13" letter-spacing="3">LOW-VOLTAGE ENERGY STORAGE CONTROLLER</text>
+</svg>
