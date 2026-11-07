@@ -4,14 +4,16 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { LogOut, Settings, ShoppingBag, UserRound } from "lucide-react";
 import { useCart } from "@/components/store/cart-provider";
 import { useAuth } from "@/components/auth-provider";
+import NotificationsBell from "@/components/notifications-bell";
 
 const links = [
   { label: "Home", href: "/" },
   { label: "Shop", href: "/shop" },
   { label: "Our story", href: "/story" },
-  { label: "Orders", href: "/orders" },
+  { label: "Purchase history", href: "/account/orders" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -20,7 +22,13 @@ export default function SiteHeader() {
   const { user, account, loading, signOut } = useAuth();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
-  const visibleLinks = user ? links.filter((link) => link.href !== "/") : links;
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const visibleLinks = user
+    ? [
+        ...links.filter((link) => link.href !== "/"),
+        { label: "Account", href: "/account" },
+      ]
+    : links;
   const accountName = account?.firstname || user?.email?.split("@")[0] || "Account";
 
   async function handleSignOut() {
@@ -65,6 +73,15 @@ export default function SiteHeader() {
             {loading ? null : user ? (
               <>
                 <span>Hi, {accountName}</span>
+                <Link href="/account" onClick={() => setMenuOpen(false)}>
+                  Profile &amp; settings
+                </Link>
+                <Link href="/cart" onClick={() => setMenuOpen(false)}>
+                  Your bag ({itemCount})
+                </Link>
+                <Link href="/account/orders" onClick={() => setMenuOpen(false)}>
+                  Purchase history
+                </Link>
                 <button type="button" onClick={() => void handleSignOut()}>Sign out</button>
               </>
             ) : (
@@ -78,8 +95,67 @@ export default function SiteHeader() {
         <div className="header-actions">
           {!loading && (user ? (
             <>
-              <span className="header-account">Hi, {accountName}</span>
-              <button className="header-signin" type="button" onClick={() => void handleSignOut()}>Sign out</button>
+              <NotificationsBell />
+              <div className="account-menu">
+                <button
+                  className="account-menu-trigger"
+                  type="button"
+                  aria-expanded={accountMenuOpen}
+                  aria-haspopup="menu"
+                  aria-label="Open account menu"
+                  onClick={() => setAccountMenuOpen((open) => !open)}
+                >
+                  <UserRound aria-hidden="true" size={17} />
+                  <span className="header-account">Hi, {accountName}</span>
+                  <span className="account-menu-chevron" aria-hidden="true">⌄</span>
+                </button>
+                {accountMenuOpen && (
+                  <div className="account-dropdown" role="menu">
+                    <div className="account-dropdown-heading">
+                      <span className="account-avatar" aria-hidden="true">
+                        {accountName.slice(0, 1).toUpperCase()}
+                      </span>
+                      <div>
+                        <strong>{accountName}</strong>
+                        <span>{user.email}</span>
+                      </div>
+                    </div>
+                    <Link
+                      href="/account"
+                      role="menuitem"
+                      onClick={() => setAccountMenuOpen(false)}
+                    >
+                      <Settings aria-hidden="true" size={16} />
+                      Profile &amp; settings
+                    </Link>
+                    <Link
+                      href="/cart"
+                      role="menuitem"
+                      onClick={() => setAccountMenuOpen(false)}
+                    >
+                      <ShoppingBag aria-hidden="true" size={16} />
+                      Your bag <span className="account-dropdown-count">{itemCount}</span>
+                    </Link>
+                    <Link
+                      href="/account/orders"
+                      role="menuitem"
+                      onClick={() => setAccountMenuOpen(false)}
+                    >
+                      <span className="account-dropdown-icon" aria-hidden="true">▤</span>
+                      Purchase history
+                    </Link>
+                    <button
+                      className="account-dropdown-signout"
+                      type="button"
+                      role="menuitem"
+                      onClick={() => void handleSignOut()}
+                    >
+                      <LogOut aria-hidden="true" size={16} />
+                      Log out
+                    </button>
+                  </div>
+                )}
+              </div>
             </>
           ) : (
             <>

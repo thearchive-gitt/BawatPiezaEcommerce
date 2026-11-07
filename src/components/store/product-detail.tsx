@@ -1,13 +1,35 @@
+"use client";
+
 import Link from "next/link";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import AddToBagButton from "@/components/store/add-to-bag-button";
+import BuyNowButton from "@/components/store/buy-now-button";
 import ProductGrid from "@/components/store/product-grid";
 import ProductStock from "@/components/store/product-stock";
+import ProductReviews from "@/components/store/product-reviews";
 import { formatPrice, products, type Product } from "@/data/products";
 
 export default function ProductDetail({ product }: { product: Product }) {
+  const images = [product.image, ...(product.gallery ?? [])];
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const relatedProducts = products
     .filter((item) => item.id !== product.id)
     .slice(0, 3);
+
+  useEffect(() => {
+    if (!previewImage) return;
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setPreviewImage(null);
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [previewImage]);
 
   return (
     <main className="page-shell product-page">
@@ -18,23 +40,27 @@ export default function ProductDetail({ product }: { product: Product }) {
       </nav>
       <section className="product-detail-layout">
         <div className="product-detail-gallery">
-          <div
+          <button
             className="product-detail-image"
-            role="img"
+            type="button"
+            aria-haspopup="dialog"
             aria-label={product.name}
             style={{ backgroundImage: `url("${product.image}")` }}
+            onClick={() => setPreviewImage(product.image)}
           >
             {product.note && <span className="product-note">{product.note}</span>}
-          </div>
+            <span className="product-image-preview-hint">View photo</span>
+          </button>
           {product.gallery && (
             <div className="product-detail-thumbnails" aria-label="Product views">
               {product.gallery.map((image, index) => (
-                <div
+                <button
                   className="product-detail-thumbnail"
                   key={image}
-                  role="img"
+                  type="button"
                   aria-label={`${product.name} view ${index + 2}`}
                   style={{ backgroundImage: `url("${image}")` }}
+                  onClick={() => setPreviewImage(image)}
                 />
               ))}
             </div>
@@ -47,6 +73,7 @@ export default function ProductDetail({ product }: { product: Product }) {
           <ProductStock detail productId={product.id} />
           <p className="detail-description">{product.description}</p>
           <AddToBagButton product={product} />
+          <BuyNowButton product={product} />
           <p className="detail-shipping">
             Secure demo checkout · ₱250 shipping, free on orders over ₱5,000
           </p>
@@ -67,6 +94,7 @@ export default function ProductDetail({ product }: { product: Product }) {
           </p>
         </div>
       </section>
+      <ProductReviews productId={product.id} />
       {relatedProducts.length > 0 && (
         <section className="related-products">
           <div className="section-heading">
@@ -79,6 +107,53 @@ export default function ProductDetail({ product }: { product: Product }) {
           <ProductGrid products={relatedProducts} />
         </section>
       )}
+      {previewImage && typeof document !== "undefined"
+        ? createPortal(
+            <div
+              className="product-image-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-label={`${product.name} photo preview`}
+              onClick={() => setPreviewImage(null)}
+            >
+              <button
+                className="product-image-modal-close"
+                type="button"
+                aria-label="Close photo preview"
+                onClick={() => setPreviewImage(null)}
+              >
+                ×
+              </button>
+              <div
+                className="product-image-modal-content"
+                onClick={(event) => event.stopPropagation()}
+              >
+                <Image
+                  className="product-image-modal-photo"
+                  alt={product.name}
+                  src={previewImage}
+                  width={1600}
+                  height={1200}
+                  sizes="(max-width: 980px) 100vw, 980px"
+                />
+                <div className="product-image-modal-controls">
+                  {images.map((image, index) => (
+                    <button
+                      className={`product-image-modal-thumb${image === previewImage ? " active" : ""}`}
+                      key={image}
+                      type="button"
+                      aria-label={`View photo ${index + 1}`}
+                      aria-pressed={image === previewImage}
+                      style={{ backgroundImage: `url("${image}")` }}
+                      onClick={() => setPreviewImage(image)}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>,
+            document.body,
+          )
+        : null}
     </main>
   );
 }

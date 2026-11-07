@@ -22,7 +22,7 @@ export default function ProductStock({
   return (
     <p className={className}>
       {detail && <span aria-hidden="true">●</span>}
-      {stock > 0 ? (detail ? `In stock · ${stock} available` : `${stock} in stock`) : "Out of stock"}
+      {stock > 0 ? (detail ? `In stock · ${stock} available` : `${stock} in stock`) : "Out of stock · save to bag only"}
     </p>
   );
 }

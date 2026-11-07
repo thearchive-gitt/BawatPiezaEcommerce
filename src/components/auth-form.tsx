@@ -4,11 +4,20 @@ import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
+import type { Session } from "@supabase/supabase-js";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import { apiFetch } from "@/lib/api";
 
 type AuthFormProps = {
   mode: "login" | "signup";
 };
+
+function getPostAuthPath() {
+  const redirectTo = new URLSearchParams(window.location.search).get("redirectTo");
+  return redirectTo?.startsWith("/") && !redirectTo.startsWith("//")
+    ? redirectTo
+    : "/shop";
+}
 
 export default function AuthForm({ mode }: AuthFormProps) {
   const isSignup = mode === "signup";
@@ -41,34 +50,33 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
     setValidationError("");
     setSubmitting(true);
-    const supabase = getSupabaseBrowserClient();
-
     try {
       if (isSignup) {
-        const nameParts = name.split(/\s+/).filter(Boolean);
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              firstname: nameParts[0] ?? "",
-              lastname: nameParts.slice(1).join(" "),
-            },
-          },
+        const response = await apiFetch("/api/v1/auth/signup", {
+          method: "POST",
+          body: JSON.stringify({ email, password, name }),
         });
-        if (error) throw error;
-        if (!data.session) {
+        const data = (await response.json()) as { session: Session | null };
+        if (data.session) {
+          const { error } = await getSupabaseBrowserClient().auth.setSession(data.session);
+          if (error) throw error;
+        } else {
           setMessage("Account created. Check your email to confirm your account, then sign in.");
           return;
         }
-        router.push("/shop");
+        router.push(getPostAuthPath());
         router.refresh();
         return;
       }
 
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const response = await apiFetch("/api/v1/auth/signin", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      });
+      const data = (await response.json()) as { session: Session };
+      const { error } = await getSupabaseBrowserClient().auth.setSession(data.session);
       if (error) throw error;
-      router.push("/shop");
+      router.push(getPostAuthPath());
       router.refresh();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "";

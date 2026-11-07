@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import AuthProvider from "@/components/auth-provider";
 import CartProvider from "@/components/store/cart-provider";
-import CursorGrid from "@/components/ui/cursor-grid";
 import SiteFooter from "@/components/site-footer";
 import SiteHeader from "@/components/site-header";
+import ChatWidget from "@/components/store/chat-widget";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -23,26 +23,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" data-scroll-behavior="smooth">
-      <body>
+      <body suppressHydrationWarning>
         <AuthProvider>
           <CartProvider>
             <SiteHeader />
             {children}
             <SiteFooter />
-            <CursorGrid
-              className="cursor-grid--page"
-              cellSize={64}
-              color="#e47b3f"
-              gridColor="#c66d3d"
-              radius={140}
-              holdTime={350}
-              fadeDuration={750}
-              fillOpacity={0.025}
-              gridOpacity={0.035}
-              spotlight={0.48}
-              clickPulse
-              dpr={1.25}
-            />
+            <ChatWidget />
           </CartProvider>
         </AuthProvider>
       </body>

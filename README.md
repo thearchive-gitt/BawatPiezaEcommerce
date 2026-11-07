@@ -13,27 +13,36 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+The storefront calls the repository-level backend through
+`NEXT_PUBLIC_API_URL`, which defaults to [http://localhost:4000](http://localhost:4000)
+for local development. Start that service from the repository root with
+`npm run dev` inside `backend`.
+
 ## Storefront features
 
 - Searchable product catalog with PHP pricing and sample stock counts.
 - Product detail pages with technical specifications.
 - Stock-limited cart with browser-local persistence.
 - Supabase Auth sign-in/sign-up and authenticated order and checkout pages.
-- Demo checkout, order history, and a sample order-status timeline.
+- Unified backend API for authenticated account and order requests.
+- Checkout with cash on delivery or GCash through PayMongo Hosted Checkout,
+  order history, and a sample order-status timeline.
 
 ## Prototype limitations
 
-This repository does not include a payment provider, inventory service, or
-fulfillment integration. Supabase Auth validates credentials; the
-`user_accounts` table supplies account/profile information and must contain an
-active row for each customer. Checkout still creates a demo-only order in the
-current browser and does not charge a payment method or send an order to a
-seller or courier. Cart contents and demo orders are stored in browser local
-storage and are not shared across devices.
+PayMongo Hosted Checkout requires `PAYMONGO_SECRET_KEY` in the backend and a
+PayMongo webhook configured to `POST /api/v1/webhooks/paymongo`. Apply the
+store payment migration before enabling GCash. Supabase Auth validates
+credentials; the `user_accounts` table supplies account/profile information
+and must contain an active row for each customer. Cart contents remain local
+UI state; orders are persisted by the unified backend and are available across
+devices. Fulfillment and courier integrations are not included.
 
-Copy the Supabase values into `.env.local` before running the app. Only the
-`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` variables are
-used by browser code. Never expose or commit `SUPABASE_SERVICE_ROLE_KEY`.
+Supabase configuration belongs only in `backend/.env` locally. The ecommerce
+Next.js app still needs the public `NEXT_PUBLIC_SUPABASE_URL` and
+`NEXT_PUBLIC_SUPABASE_ANON_KEY` values for Supabase Auth session handling, plus
+`NEXT_PUBLIC_API_URL` for the unified backend. These public values are safe to
+expose in browser code; never expose or commit `SUPABASE_SERVICE_ROLE_KEY`.
 
 Technical output and stock figures are sample prototype data. Energy output
 varies with installation, load, and step force; peak figures are not guaranteed

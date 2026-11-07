@@ -15,6 +15,7 @@ export default function CartPage() {
     availableStock,
     removeItem,
     setQuantity,
+    hasUnavailableItems,
   } = useCart();
 
   return (
@@ -45,7 +46,9 @@ export default function CartPage() {
                 <div className="cart-item-info">
                   <p className="product-category">{product.category}</p>
                   <h2>{product.name}</h2>
-                  <span className="cart-stock">{availableStock(product.id)} in stock</span>
+                  <span className={`cart-stock${availableStock(product.id) < quantity ? " cart-stock-unavailable" : ""}`}>
+                    {availableStock(product.id) < quantity ? "Currently unavailable · ordering blocked" : `${availableStock(product.id)} in stock`}
+                  </span>
                   <button className="remove-link" onClick={() => removeItem(product.id)} type="button">Remove</button>
                 </div>
                 <div className="quantity-control" aria-label={`Quantity for ${product.name}`}>
@@ -76,10 +79,16 @@ export default function CartPage() {
             <div className="summary-line"><span>Subtotal</span><span>{formatPrice(subtotal)}</span></div>
             <div className="summary-line"><span>Delivery</span><span>{shipping === 0 ? "Free" : formatPrice(shipping)}</span></div>
             <div className="summary-total"><span>Total</span><strong>{formatPrice(total)}</strong></div>
-            <Link className="button button-dark checkout-button" href="/checkout">
-              Continue to checkout <span aria-hidden="true">→</span>
-            </Link>
-            <p className="summary-note">Free delivery over ₱5,000. Demo checkout does not process a payment.</p>
+            {hasUnavailableItems ? (
+              <button className="button button-dark checkout-button" disabled type="button">
+                Remove unavailable items to order
+              </button>
+            ) : (
+              <Link className="button button-dark checkout-button" href="/checkout">
+                Continue to checkout <span aria-hidden="true">→</span>
+              </Link>
+            )}
+            <p className="summary-note">Free delivery over ₱5,000. Choose COD or GCash at checkout.</p>
           </aside>
         </section>
       )}

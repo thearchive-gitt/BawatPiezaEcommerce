@@ -1,28 +1,27 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useCart } from "@/components/store/cart-provider";
+import { useAuth } from "@/components/auth-provider";
 import type { Product } from "@/data/products";
 
 export default function AddToBagButton({ product }: { product: Product }) {
-  const { addItem, availableStock, items } = useCart();
-  const [added, setAdded] = useState(false);
-  const [unavailable, setUnavailable] = useState(false);
+  const { availableStock } = useCart();
+  const { user, loading } = useAuth();
+  const router = useRouter();
+  const [redirecting, setRedirecting] = useState(false);
 
   function handleAdd() {
-    const stock = availableStock(product.id);
-    if (stock < 1) return;
-    const currentQuantity =
-      items.find((item) => item.product.id === product.id)?.quantity ?? 0;
-    if (currentQuantity >= stock) {
-      setUnavailable(true);
-      setAdded(false);
+    if (!user) {
+      setRedirecting(true);
+      router.push(
+        `/login?redirectTo=${encodeURIComponent(`/shop/${product.id}/quantity`)}`,
+      );
       return;
     }
-    addItem(product);
-    setAdded(true);
-    setUnavailable(false);
-    window.setTimeout(() => setAdded(false), 1400);
+
+    router.push(`/shop/${product.id}/quantity`);
   }
 
   return (
@@ -30,15 +29,15 @@ export default function AddToBagButton({ product }: { product: Product }) {
       className="add-button"
       onClick={handleAdd}
       type="button"
-      disabled={availableStock(product.id) < 1}
+      disabled={loading || redirecting}
     >
-      {availableStock(product.id) < 1
-        ? "Out of stock"
-        : unavailable
-          ? "Stock limit reached"
-          : added
-            ? "Added to bag ✓"
-            : "Add to bag"}
+      {loading
+        ? "Checking account..."
+        : redirecting
+        ? "Taking you to sign in..."
+        : availableStock(product.id) < 1
+        ? "Save to bag · out of stock"
+        : "Choose quantity"}
     </button>
   );
 }

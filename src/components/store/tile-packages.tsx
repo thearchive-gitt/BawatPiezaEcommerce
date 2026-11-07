@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/components/auth-provider";
 import { useCart } from "@/components/store/cart-provider";
 import { formatPrice, products } from "@/data/products";
 
@@ -29,7 +31,9 @@ const packages = [
 ];
 
 export default function TilePackages() {
-  const { addItem, availableStock } = useCart();
+  const { availableStock } = useCart();
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
   if (!tile) return null;
 
@@ -63,11 +67,19 @@ export default function TilePackages() {
               </ul>
               <button
                 className="button button-dark pricing-button"
-                disabled={!canAdd}
-                onClick={() => addItem(tile, plan.tiles)}
+                disabled={!canAdd || loading}
+                onClick={() => {
+                  const quantityPath = `/shop/${tile.id}/quantity?quantity=${plan.tiles}`;
+                  router.push(
+                    user
+                      ? quantityPath
+                      : `/login?redirectTo=${encodeURIComponent(quantityPath)}`,
+                  );
+                }}
                 type="button"
               >
-                {canAdd ? "Add package to bag" : "Package unavailable"} <span aria-hidden="true">→</span>
+                {canAdd ? "Choose package quantity" : "Package unavailable"}{" "}
+                <span aria-hidden="true">→</span>
               </button>
               <Link className="pricing-detail-link" href="/shop/kinetic-floor-tile">View tile details</Link>
             </article>
@@ -75,7 +87,7 @@ export default function TilePackages() {
         })}
       </div>
       <p className="pricing-note">
-        Package prices are based on the current ₱4,850 tile price. Delivery is
+        Package prices are based on the current ₱2,750 tile price. Delivery is
         free on orders of ₱5,000 or more.
       </p>
     </section>

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import CheckoutForm from "@/components/store/checkout-form";
 
 export const metadata: Metadata = {
   title: "Checkout",
-  description: "Review your Bawat Pieza demo order.",
+  description: "Review your Bawat Pieza order and choose a payment method.",
 };
 
 export default function CheckoutPage() {
@@ -12,9 +13,11 @@ export default function CheckoutPage() {
       <section className="page-intro checkout-intro">
         <p className="eyebrow">SECURE YOUR COMPONENTS</p>
         <h1>Checkout.</h1>
-        <p>Sign in to save your order details, then enter delivery details. No payment is processed.</p>
+        <p>Sign in to save your order details, enter delivery details, and choose how to pay.</p>
       </section>
-      <CheckoutForm />
+      <Suspense fallback={<p className="storage-message">Loading checkout...</p>}>
+        <CheckoutForm />
+      </Suspense>
     </main>
   );
 }

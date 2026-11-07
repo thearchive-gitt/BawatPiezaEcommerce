@@ -9,6 +9,7 @@ import {
 } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import { apiFetch } from "@/lib/api";
 
 export type UserAccount = {
   id: string;
@@ -21,6 +22,12 @@ export type UserAccount = {
   status: string | null;
   is_active: boolean | null;
   created_at: string | null;
+  address: string | null;
+  city: string | null;
+  postal_code: string | null;
+  landmark: string | null;
+  gender: "female" | "male" | "non_binary" | "prefer_not_to_say" | null;
+  birth_date: string | null;
 };
 
 type AuthContextValue = {
@@ -28,6 +35,7 @@ type AuthContextValue = {
   account: UserAccount | null;
   loading: boolean;
   signOut: () => Promise<void>;
+  updateAccount: (details: Partial<UserAccount>) => Promise<UserAccount>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -40,18 +48,10 @@ export function useAuth() {
   return context;
 }
 
-async function loadAccount(user: User) {
-  const { data, error } = await getSupabaseBrowserClient()
-    .from("user_accounts")
-    .select(
-      "id, firstname, middlename, lastname, role, contactNo, email, status, is_active, created_at",
-    )
-    .eq("email", user.email ?? "")
-    .maybeSingle();
-  if (error) {
-    throw new Error(`Account profile could not be loaded: ${error.message}`);
-  }
-  return data as UserAccount | null;
+async function loadAccount() {
+  const response = await apiFetch("/api/v1/auth/me");
+  const body = (await response.json()) as { account: UserAccount | null };
+  return body.account;
 }
 
 export default function AuthProvider({
@@ -73,7 +73,7 @@ export default function AuthProvider({
       if (!active) return;
       setSession(data.session);
       if (data.session?.user) {
-        setAccount(await loadAccount(data.session.user));
+        setAccount(await loadAccount());
       }
       setLoading(false);
     }
@@ -92,7 +92,7 @@ export default function AuthProvider({
         setAccount(null);
         setLoading(false);
       } else {
-        void loadAccount(nextSession.user)
+        void loadAccount()
           .then(setAccount)
           .catch(() => setAccount(null))
           .finally(() => setLoading(false));
@@ -113,6 +113,26 @@ export default function AuthProvider({
       async signOut() {
         const { error } = await getSupabaseBrowserClient().auth.signOut();
         if (error) throw new Error(`Sign-out failed: ${error.message}`);
+      },
+      async updateAccount(details) {
+        const response = await apiFetch("/api/v1/auth/me", {
+          method: "PATCH",
+          body: JSON.stringify({
+            firstname: details.firstname,
+            middlename: details.middlename,
+            lastname: details.lastname,
+            contactNo: details.contactNo,
+            address: details.address,
+            city: details.city,
+            postalCode: details.postal_code,
+            landmark: details.landmark,
+            gender: details.gender,
+            birthDate: details.birth_date,
+          }),
+        });
+        const body = (await response.json()) as { account: UserAccount };
+        setAccount(body.account);
+        return body.account;
       },
     }),
     [account, loading, session],
