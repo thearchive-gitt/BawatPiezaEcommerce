@@ -60,7 +60,7 @@ export default function BuyNowButton({ product }: { product: Product }) {
             <p className="eyebrow">QUICK CHECKOUT</p>
             <h2 id="buy-now-title">Buy {product.name}</h2>
             <p className="buy-now-description">
-              Choose how many tiles you need and how you want to pay.
+              Choose your quantity and payment method, then enter your delivery information.
             </p>
             <div className="buy-now-quantity">
               <span>Quantity</span>
@@ -110,7 +110,7 @@ export default function BuyNowButton({ product }: { product: Product }) {
               </label>
             </div>
             <button className="button button-dark buy-now-continue" onClick={continueToCheckout} type="button">
-              Continue to checkout <span aria-hidden="true">→</span>
+              Continue to delivery details <span aria-hidden="true">→</span>
             </button>
           </div>
         </div>

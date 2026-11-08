@@ -16,10 +16,18 @@ export async function apiFetch(path: string, init: RequestInit = {}) {
     headers.set("Content-Type", "application/json");
   }
 
-  const response = await fetch(`${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`, {
-    ...init,
-    headers,
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`, {
+      ...init,
+      headers,
+    });
+  } catch (error) {
+    console.error("[api] Backend request failed:", error);
+    throw new Error(
+      `The server is unavailable at ${API_BASE_URL}. Start the backend service and try again.`,
+    );
+  }
   if (!response.ok) {
     const body = (await response.json().catch(() => null)) as { error?: string } | null;
     throw new Error(body?.error ?? `Request failed with status ${response.status}.`);

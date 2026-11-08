@@ -36,8 +36,8 @@ export default function AddToBagButton({ product }: { product: Product }) {
         : redirecting
         ? "Taking you to sign in..."
         : availableStock(product.id) < 1
-        ? "Save to bag · out of stock"
-        : "Choose quantity"}
+        ? "Add to cart · out of stock"
+        : "Add to cart"}
     </button>
   );
 }

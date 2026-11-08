@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useAuth, type UserAccount } from "@/components/auth-provider";
 import LoadingTile from "@/components/ui/loading-tile";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
 function calculateAge(birthDate: string | null | undefined) {
   if (!birthDate) return null;
@@ -17,14 +18,56 @@ function calculateAge(birthDate: string | null | undefined) {
   if (beforeBirthday) age -= 1;
   return age >= 0 ? age : null;
 }
+type AddressArea = { code: string; name: string; barangays?: AddressArea[]; cities?: AddressArea[]; municipalities?: AddressArea[]; provinces?: AddressArea[] };
 
 export default function AccountPage() {
   const { user, account, loading, updateAccount } = useAuth();
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [addressData, setAddressData] = useState<AddressArea[]>([]);
+  const [regionCode, setRegionCode] = useState(account?.region_code ?? "");
+  const [provinceCode, setProvinceCode] = useState(account?.province_code ?? "");
+  const [cityCode, setCityCode] = useState(account?.city_code ?? "");
+  const [barangayCode, setBarangayCode] = useState(account?.barangay_code ?? "");
+  const [avatarUrl, setAvatarUrl] = useState(account?.avatar_url ?? "");
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  useEffect(() => {
+    fetch("/data/philippine-addresses.json").then((response) => response.json()).then(setAddressData).catch(() => setError("Address options could not be loaded."));
+  }, []);
 
   const age = useMemo(() => calculateAge(account?.birth_date), [account?.birth_date]);
+  const selectedRegion = addressData.find((area) => area.code === regionCode);
+  const provinces = selectedRegion?.provinces ?? [];
+  const cities = selectedRegion ? provinceCode
+    ? [...(provinces.find((area) => area.code === provinceCode)?.cities ?? []), ...(provinces.find((area) => area.code === provinceCode)?.municipalities ?? [])]
+    : [...(selectedRegion.cities ?? []), ...(selectedRegion.municipalities ?? [])] : [];
+  const selectedCity = cities.find((area) => area.code === cityCode);
+  const barangays = selectedCity?.barangays ?? [];
+
+  async function handleAvatarChange(file: File | undefined) {
+    if (!file || !user) return;
+    if (!file.type.startsWith("image/") || file.size > 5 * 1024 * 1024) {
+      setError("Choose an image smaller than 5 MB.");
+      return;
+    }
+    setAvatarUploading(true);
+    setError("");
+    try {
+      const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
+      const path = `${user.id}/avatar.${extension}`;
+      const supabase = getSupabaseBrowserClient();
+      const { error: uploadError } = await supabase.storage.from("avatars").upload(path, file, { upsert: true, contentType: file.type });
+      if (uploadError) throw new Error(`Profile photo could not be uploaded: ${uploadError.message}`);
+      const { data } = supabase.storage.from("avatars").getPublicUrl(path);
+      setAvatarUrl(`${data.publicUrl}?v=${Date.now()}`);
+      setMessage("Profile photo uploaded. Save your profile to keep it.");
+    } catch (uploadError) {
+      setError(uploadError instanceof Error ? uploadError.message : "Profile photo could not be uploaded.");
+    } finally {
+      setAvatarUploading(false);
+    }
+  }
 
   if (loading) {
     return <main className="page-shell account-page"><LoadingTile label="Loading profile" detail="Fetching your saved account and delivery details." /></main>;
@@ -55,11 +98,19 @@ export default function AccountPage() {
         lastname: String(formData.get("lastname")).trim(),
         contactNo: String(formData.get("contactNo")).trim() || null,
         address: String(formData.get("address")).trim() || null,
-        city: String(formData.get("city")).trim() || null,
+        city: cities.find((area) => area.code === cityCode)?.name ?? "",
+        region: addressData.find((area) => area.code === regionCode)?.name ?? "",
+        region_code: regionCode,
+        province: provinces.find((area) => area.code === provinceCode)?.name ?? null,
+        province_code: provinceCode || null,
+        city_code: cityCode,
+        barangay: barangays.find((area) => area.code === barangayCode)?.name ?? "",
+        barangay_code: barangayCode,
         postal_code: String(formData.get("postalCode")).trim() || null,
         landmark: String(formData.get("landmark")).trim() || null,
         gender: (String(formData.get("gender")) || null) as UserAccount["gender"],
         birth_date: String(formData.get("birthDate")) || null,
+        avatar_url: avatarUrl || account?.avatar_url || null,
       });
       setMessage("Your profile and delivery details were saved.");
     } catch (saveError) {
@@ -67,13 +118,14 @@ export default function AccountPage() {
     } finally {
       setSaving(false);
     }
+
   }
 
   return (
     <main className="page-shell account-page">
       <div className="account-profile-hero">
         <div className="account-avatar account-profile-avatar" aria-hidden="true">
-          {(account.firstname || user.email || "A").slice(0, 1).toUpperCase()}
+          {avatarUrl || account.avatar_url ? <img alt="" src={avatarUrl || account.avatar_url || undefined} /> : (account.firstname || user.email || "A").slice(0, 1).toUpperCase()}
         </div>
         <div>
           <p className="eyebrow">PROFILE &amp; SETTINGS</p>
@@ -92,6 +144,10 @@ export default function AccountPage() {
       </nav>
 
       <form className="profile-form" onSubmit={handleSubmit}>
+        <label>
+          Profile photo
+          <input accept="image/*" disabled={avatarUploading} onChange={(event) => void handleAvatarChange(event.target.files?.[0])} type="file" />
+        </label>
         <section className="profile-form-section">
           <p className="eyebrow">PERSONAL DETAILS</p>
           <div className="profile-fields">
@@ -144,8 +200,28 @@ export default function AccountPage() {
               <input defaultValue={account.address ?? ""} name="address" required />
             </label>
             <label>
+              Region
+              <select name="region" value={regionCode} onChange={(event) => { setRegionCode(event.target.value); setProvinceCode(""); setCityCode(""); setBarangayCode(""); }} required>
+                <option value="">Select region</option>{addressData.map((area) => <option key={area.code} value={area.code}>{area.name}</option>)}
+              </select>
+            </label>
+            <label>
+              Province
+              <select name="province" value={provinceCode} disabled={!regionCode || provinces.length === 0} onChange={(event) => { setProvinceCode(event.target.value); setCityCode(""); setBarangayCode(""); }} required={provinces.length > 0}>
+                <option value="">{provinces.length ? "Select province" : "Not applicable"}</option>{provinces.map((area) => <option key={area.code} value={area.code}>{area.name}</option>)}
+              </select>
+            </label>
+            <label>
               City / Municipality
-              <input defaultValue={account.city ?? ""} name="city" required />
+              <select name="city" value={cityCode} disabled={!regionCode || (provinces.length > 0 && !provinceCode)} onChange={(event) => { setCityCode(event.target.value); setBarangayCode(""); }} required>
+                <option value="">Select city or municipality</option>{cities.map((area) => <option key={area.code} value={area.code}>{area.name}</option>)}
+              </select>
+            </label>
+            <label>
+              Barangay
+              <select name="barangay" value={barangayCode} disabled={!cityCode} onChange={(event) => setBarangayCode(event.target.value)} required>
+                <option value="">Select barangay</option>{barangays.map((area) => <option key={area.code} value={area.code}>{area.name}</option>)}
+              </select>
             </label>
             <label>
               Postal code

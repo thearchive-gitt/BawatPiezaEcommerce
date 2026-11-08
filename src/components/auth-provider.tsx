@@ -21,9 +21,17 @@ export type UserAccount = {
   email: string;
   status: string | null;
   is_active: boolean | null;
+  avatar_url: string | null;
   created_at: string | null;
   address: string | null;
   city: string | null;
+  region: string | null;
+  region_code: string | null;
+  province: string | null;
+  province_code: string | null;
+  city_code: string | null;
+  barangay: string | null;
+  barangay_code: string | null;
   postal_code: string | null;
   landmark: string | null;
   gender: "female" | "male" | "non_binary" | "prefer_not_to_say" | null;
@@ -124,6 +132,14 @@ export default function AuthProvider({
             contactNo: details.contactNo,
             address: details.address,
             city: details.city,
+            region: details.region,
+            regionCode: details.region_code,
+            province: details.province,
+            provinceCode: details.province_code,
+            cityCode: details.city_code,
+            barangay: details.barangay,
+            barangayCode: details.barangay_code,
+            avatarUrl: details.avatar_url,
             postalCode: details.postal_code,
             landmark: details.landmark,
             gender: details.gender,

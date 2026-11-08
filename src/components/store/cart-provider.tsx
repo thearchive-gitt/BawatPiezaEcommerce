@@ -24,6 +24,18 @@ export type CustomerDetails = {
   city: string;
   postalCode: string;
   landmark: string;
+  region?: string;
+  regionCode?: string;
+  province?: string;
+  provinceCode?: string;
+  barangay?: string;
+  barangayCode?: string;
+  cityCode?: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  distanceKm?: number | null;
+  locationSource?: "device" | "address";
+  locationAccuracyMeters?: number | null;
 };
 export type PaymentMethod = "cod" | "gcash";
 export type Order = {

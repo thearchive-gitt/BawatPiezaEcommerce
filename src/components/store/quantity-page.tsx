@@ -121,7 +121,7 @@ export default function QuantityPage({
             disabled={!canAdd}
             onClick={handleAdd}
           >
-            {stock > 0 ? "Add tiles to bag" : "Save to bag for later"}{" "}
+            {stock > 0 ? "Add to cart" : "Save to cart for later"}{" "}
             <span aria-hidden="true">→</span>
           </button>
           {message && (

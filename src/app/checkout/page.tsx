@@ -4,7 +4,7 @@ import CheckoutForm from "@/components/store/checkout-form";
 
 export const metadata: Metadata = {
   title: "Checkout",
-  description: "Review your Bawat Pieza order and choose a payment method.",
+  description: "Review your Bawat Pieza order and enter delivery information.",
 };
 
 export default function CheckoutPage() {
@@ -13,7 +13,7 @@ export default function CheckoutPage() {
       <section className="page-intro checkout-intro">
         <p className="eyebrow">SECURE YOUR COMPONENTS</p>
         <h1>Checkout.</h1>
-        <p>Sign in to save your order details, enter delivery details, and choose how to pay.</p>
+        <p>Sign in to save your order details and enter your delivery information.</p>
       </section>
       <Suspense fallback={<p className="storage-message">Loading checkout...</p>}>
         <CheckoutForm />

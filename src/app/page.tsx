@@ -118,6 +118,57 @@ export default function Home() {
         <span>MODULAR BY DESIGN</span>
       </section>
 
+      <section className="section" aria-labelledby="b2b-energy-heading">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">ENGINEERED FOR HIGH-TRAFFIC SPACES</p>
+            <h2 id="b2b-energy-heading">Turn movement into measurable infrastructure value.</h2>
+          </div>
+        </div>
+        <div className="product-grid">
+          <article className="product-card">
+            <Image
+              src="/products/kinetic-floor-tile-internal.png"
+              alt="Internal piezoelectric mechanism inside a kinetic energy harvesting floor tile"
+              width={800}
+              height={800}
+            />
+            <h3>Grid-connected energy</h3>
+            <p>
+              Deploy modular piezo dynamo tiles in entrances, corridors, and transit
+              hubs to capture distributed energy from everyday foot traffic.
+            </p>
+          </article>
+          <article className="product-card">
+            <Image
+              src="/products/kinetic-floor-tile-side.png"
+              alt="Side profile of a modular piezoelectric floor tile for commercial installation"
+              width={800}
+              height={800}
+            />
+            <h3>Foot traffic analytics</h3>
+            <p>
+              Pair harvested energy with step data to understand circulation,
+              occupancy patterns, and the performance of high-value spaces.
+            </p>
+          </article>
+          <article className="product-card">
+            <Image
+              src="/products/hero-piezo-side-view.png"
+              alt="Architectural side view of a Bawat Pieza kinetic energy floor tile"
+              width={800}
+              height={800}
+            />
+            <h3>Cost savings</h3>
+            <p>
+              Build a measurable energy pilot, reduce reliance on conventional
+              power for selected loads, and give sustainability teams auditable
+              operational data.
+            </p>
+          </article>
+        </div>
+      </section>
+
       <TilePackages />
 
       <section className="section section-featured">
@@ -149,6 +200,17 @@ export default function Home() {
         <span className="closing-sparkle" aria-hidden="true">✳</span>
         <p>Small-scale energy harvesting.<br />One footstep at a time.</p>
         <Link className="text-link" href="/shop">Explore the system <span aria-hidden="true">→</span></Link>
+      </section>
+
+      <section className="section" aria-labelledby="commercial-cta-heading">
+        <p className="eyebrow">PLAN YOUR PILOT</p>
+        <h2 id="commercial-cta-heading">A smarter floor starts with a measurable brief.</h2>
+        <p>
+          Tell us about your site, expected foot traffic, and target loads. We
+          will help your facilities or development team scope a practical
+          kinetic energy harvesting pilot.
+        </p>
+        <Link className="button button-dark" href="/contact">Talk to the Bawat Pieza team <span aria-hidden="true">↗</span></Link>
       </section>
     </main>
   );

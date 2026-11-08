@@ -12,6 +12,30 @@ type AuthFormProps = {
   mode: "login" | "signup";
 };
 
+function getUserFriendlyAuthError(error: unknown) {
+  const errorMessage = error instanceof Error ? error.message : "";
+  const normalizedMessage = errorMessage.toLowerCase();
+
+  if (
+    normalizedMessage.includes("invalid login credentials") ||
+    normalizedMessage.includes("email or password is incorrect")
+  ) {
+    return "Incorrect email or password. Please try again.";
+  }
+
+  if (
+    normalizedMessage.includes("incorrect password") ||
+    normalizedMessage.includes("no account exists") ||
+    normalizedMessage.includes("confirm your email") ||
+    normalizedMessage.includes("valid email") ||
+    normalizedMessage.includes("required")
+  ) {
+    return errorMessage;
+  }
+
+  return "Unable to sign in. Please try again.";
+}
+
 function getPostAuthPath() {
   const redirectTo = new URLSearchParams(window.location.search).get("redirectTo");
   return redirectTo?.startsWith("/") && !redirectTo.startsWith("//")
@@ -30,6 +54,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setMessage("");
+    setValidationError("");
     const formData = new FormData(event.currentTarget);
     const email = String(formData.get("email")).trim();
     const password = String(formData.get("password"));
@@ -48,7 +73,6 @@ export default function AuthForm({ mode }: AuthFormProps) {
       return;
     }
 
-    setValidationError("");
     setSubmitting(true);
     try {
       if (isSignup) {
@@ -79,12 +103,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
       router.push(getPostAuthPath());
       router.refresh();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "";
-      setMessage(
-        errorMessage.toLowerCase().includes("invalid login credentials")
-          ? "The email or password is incorrect. Use the password saved in Supabase Auth; user_accounts stores profile details only."
-          : errorMessage || "Authentication failed. Please try again.",
-      );
+      setMessage(getUserFriendlyAuthError(error));
     } finally {
       setSubmitting(false);
     }
@@ -116,6 +135,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
           Email address
           <input
             autoComplete="email"
+            aria-invalid={Boolean(validationError)}
             name="email"
             placeholder="you@example.com"
             required
@@ -132,7 +152,6 @@ export default function AuthForm({ mode }: AuthFormProps) {
               placeholder="At least 8 characters"
               required
               type={showPassword ? "text" : "password"}
-              aria-invalid={Boolean(validationError)}
             />
             <button
               className="password-toggle"
