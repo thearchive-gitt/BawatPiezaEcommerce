@@ -18,7 +18,7 @@ export default function SiteFooter() {
               <p className="footer-heading">EXPLORE</p>
               <Link href="/shop">Tiles and components <ArrowRight aria-hidden="true" /></Link>
               <Link href="/story">How it works <ArrowRight aria-hidden="true" /></Link>
-              <Link href="/orders">Order tracking <ArrowRight aria-hidden="true" /></Link>
+              <Link href="/account/assessments">Site assessments <ArrowRight aria-hidden="true" /></Link>
               <Link href="/contact">Get in touch <ArrowRight aria-hidden="true" /></Link>
             </div>
             <div>

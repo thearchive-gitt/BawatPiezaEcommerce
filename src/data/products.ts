@@ -17,7 +17,7 @@ export const products: Product[] = [
     name: "Piezo Dynamo Technology Tile",
     category: "Energy tiles",
     price: 2750,
-    image: "/products/kinetic-floor-tile.png",
+    image: "/products/tiles.svg",
     gallery: [
       "/products/kinetic-floor-tile-internal.png",
       "/products/kinetic-floor-tile-side.png",

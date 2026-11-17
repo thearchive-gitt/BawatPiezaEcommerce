@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Allura&family=Arimo:ital,wght@0,400..700;1,400..700&display=swap");
 @import "tailwindcss";
 
 :root {
@@ -14,6 +14,7 @@
   --surface: #fffefa;
   --serif: "Arimo", Arial, Helvetica, sans-serif;
   --sans: "Arimo", Arial, Helvetica, sans-serif;
+  --title-script: "Allura", "Brush Script MT", "Segoe Script", cursive;
 }
 
 .quantity-page {
@@ -674,13 +675,6 @@ textarea:focus-visible {
   content: "";
 }
 
-.bag-link {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 12px;
-}
-
 .header-actions {
   display: flex;
   align-items: center;
@@ -764,9 +758,53 @@ textarea:focus-visible {
   text-align: left;
 }
 
+.notification-row {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--line);
+}
+
+.notification-row.is-unread,
+.notification-row:hover {
+  background: #fff7f0;
+}
+
+.notification-row .notification-item {
+  flex: 1;
+  width: auto;
+  min-width: 0;
+  border-bottom: 0;
+  background: transparent;
+}
+
 .notification-item:hover,
 .notification-item.is-unread {
   background: #fff7f0;
+}
+
+.notification-delete {
+  display: grid;
+  flex: 0 0 42px;
+  place-items: center;
+  align-self: flex-start;
+  margin: 8px 8px 0 0;
+  padding: 6px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.notification-delete:hover,
+.notification-delete:focus-visible {
+  background: #f0e2d7;
+  color: var(--ink);
+}
+
+.notification-delete:disabled {
+  cursor: wait;
+  opacity: 0.55;
 }
 
 .notification-item span,
@@ -783,6 +821,13 @@ textarea:focus-visible {
 .notifications-empty {
   margin: 0;
   padding: 20px 15px;
+}
+
+.notifications-error {
+  margin: 0;
+  padding: 10px 15px;
+  color: #a12622;
+  font-size: 10px;
 }
 
 .account-menu {
@@ -1104,6 +1149,67 @@ textarea:focus-visible {
   letter-spacing: -.05em;
 }
 
+.order-view-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 0 auto 34px;
+  border-bottom: 1px solid var(--line);
+}
+
+.order-view-tab {
+  padding: 12px 16px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+}
+
+.order-view-tab.is-active {
+  border-bottom-color: var(--accent);
+  color: var(--ink);
+}
+
+.order-view-tab span {
+  display: inline-flex;
+  min-width: 18px;
+  min-height: 18px;
+  align-items: center;
+  justify-content: center;
+  margin-left: 5px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 9px;
+}
+
+.order-status-filter {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.order-status-filter select {
+  min-width: 145px;
+  padding: 9px 28px 9px 10px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 10px;
+}
+
+.order-filter-empty {
+  padding: 32px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  text-align: center;
+}
+
 .active-order-badge,
 .purchase-count {
   color: var(--accent-deep);
@@ -1112,12 +1218,36 @@ textarea:focus-visible {
   text-transform: uppercase;
 }
 
-.active-order-panel > .history-card {
+.active-order-panel .history-card {
   border-color: var(--accent);
   box-shadow: 0 18px 45px rgb(228 123 63 / 11%);
 }
 
 @media (max-width: 600px) {
+  .order-view-tabs {
+    margin-bottom: 24px;
+  }
+
+  .order-view-tab {
+    flex: 1;
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  .section-heading-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .order-status-filter {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .order-status-filter select {
+    flex: 1;
+  }
+
   .account-page {
     width: calc(100% - 36px);
     padding-top: 40px;
@@ -1172,16 +1302,6 @@ textarea:focus-visible {
   display: none;
 }
 
-.bag-count {
-  display: grid;
-  width: 23px;
-  height: 23px;
-  place-items: center;
-  border: 1px solid #d5cfc4;
-  border-radius: 50%;
-  font-size: 10px;
-}
-
 .menu-toggle {
   display: none;
 }
@@ -1191,10 +1311,9 @@ textarea:focus-visible {
   isolation: isolate;
   display: flex;
   width: 100%;
-  height: calc(100vh - 119px);
-  height: calc(100svh - 119px);
-  min-height: 0;
-  overflow: hidden;
+  min-height: calc(100vh - 119px);
+  min-height: calc(100svh - 119px);
+  overflow: clip;
   flex-direction: column;
   align-items: center;
   gap: 18px;
@@ -1276,6 +1395,34 @@ textarea:focus-visible {
   animation: hero-text-shimmer var(--shimmer-duration, 12000ms) linear infinite;
 }
 
+h1:not(.hero-title) {
+  position: relative;
+  z-index: 0;
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  background-image: linear-gradient(
+    105deg,
+    #b9381f 32%,
+    #f06b2f 47%,
+    #ffbd71 52%,
+    #e85a26 57%,
+    #a92c1b 72%
+  );
+  background-size: 250% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  font-family: var(--title-script);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.14;
+  animation: hero-text-shimmer 5000ms linear infinite;
+}
+
 @keyframes hero-text-shimmer {
   from {
     background-position: 100% 50%;
@@ -1288,12 +1435,14 @@ textarea:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
   .shimmering-text,
+  h1:not(.hero-title),
   .pricing-card {
     animation: none;
     background-image: none;
     color: currentColor;
     -webkit-text-fill-color: currentColor;
   }
+
 }
 
 @keyframes hero-step-breakdown {
@@ -1330,8 +1479,8 @@ textarea:focus-visible {
   font-family: var(--serif);
   font-size: clamp(56px, 6.4vw, 91px);
   font-weight: 400;
-  letter-spacing: -0.065em;
-  line-height: 1.05;
+  letter-spacing: 0;
+  line-height: 1.14;
 }
 
 .hero-description {
@@ -1640,6 +1789,7 @@ textarea:focus-visible {
 }
 
 .hero-image-track {
+  flex: 0 0 auto;
   width: 100vw;
   height: calc((var(--hero-image-only-vh) + var(--hero-text-duration-vh)) * 1vh + var(--hero-image-stage-height));
   margin: 0 calc(50% - 50vw);
@@ -2000,7 +2150,8 @@ textarea:focus-visible {
   overflow: hidden;
   background-color: #e4ded3;
   background-position: center;
-  background-size: cover;
+  background-size: contain;
+  background-repeat: no-repeat;
   transition: background-size 250ms ease;
 }
 
@@ -2078,9 +2229,10 @@ textarea:focus-visible {
 .story-feature-image {
   min-height: 470px;
   background-color: #d2d7cd;
-  background-image: url("/products/kinetic-floor-tile.png");
+  background-image: url("/products/tiles.svg");
   background-position: center;
-  background-size: cover;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
 .home-story-copy {
@@ -2233,6 +2385,18 @@ textarea:focus-visible {
   min-height: 65vh;
 }
 
+.cart-page {
+  min-height: 65vh;
+  background-color: var(--paper);
+  color: var(--ink);
+  isolation: isolate;
+}
+
+body:has(.cart-page) {
+  background-color: var(--paper);
+  color: var(--ink);
+}
+
 .auth-page {
   display: flex;
   flex-direction: column;
@@ -2243,6 +2407,7 @@ textarea:focus-visible {
     var(--paper);
 }
 
+body:has(.auth-page) .announcement,
 body:has(.auth-page) .site-header,
 body:has(.auth-page) .site-footer {
   display: none;
@@ -2674,7 +2839,7 @@ body:has(.auth-page) .site-footer {
 
 .story-feature-image {
   min-height: 510px;
-  background-image: url("/products/kinetic-floor-tile.png");
+  background-image: url("/products/tiles.svg");
 }
 
 .story-feature-copy {
@@ -2962,7 +3127,8 @@ body:has(.auth-page) .site-footer {
   aspect-ratio: 1;
   background-color: var(--cream);
   background-position: center;
-  background-size: cover;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
 .cart-item-info h2 {
@@ -3246,13 +3412,6 @@ body:has(.auth-page) .site-footer {
     padding: 0 10px;
   }
 
-  .bag-label {
-    display: none;
-  }
-
-  .bag-link {
-    gap: 0;
-  }
 }
 
 @media (max-width: 640px) {
@@ -3349,16 +3508,6 @@ body:has(.auth-page) .site-footer {
     font-size: 23px;
   }
 
-  .bag-link {
-    gap: 7px;
-    font-size: 10px;
-  }
-
-  .bag-count {
-    width: 21px;
-    height: 21px;
-  }
-
   .main-nav {
     position: absolute;
     top: 70px;
@@ -3418,8 +3567,8 @@ body:has(.auth-page) .site-footer {
 
   .hero {
     width: 100%;
-    height: calc(100vh - 119px);
-    height: calc(100svh - 119px);
+    min-height: calc(100vh - 119px);
+    min-height: calc(100svh - 119px);
     grid-template-columns: 1fr;
     gap: 20px;
     padding: 44px 18px 28px;
@@ -3470,10 +3619,6 @@ body:has(.auth-page) .site-footer {
       padding: 5px;
     }
 
-    .bag-count {
-      width: 21px;
-      height: 21px;
-    }
   }
 
   .hero-copy {
@@ -3957,7 +4102,8 @@ body:has(.auth-page) .site-footer {
   aspect-ratio: 1 / 0.9;
   background-color: var(--cream);
   background-position: center;
-  background-size: cover;
+  background-size: contain;
+  background-repeat: no-repeat;
   width: 100%;
   border: 0;
   cursor: zoom-in;
@@ -4081,11 +4227,11 @@ body:has(.auth-page) .site-footer {
 
 .product-detail-copy h1 {
   margin: 0;
-  font-family: var(--serif);
+  font-family: var(--title-script);
   font-size: clamp(39px, 4.6vw, 58px);
   font-weight: 400;
-  letter-spacing: -0.06em;
-  line-height: 1.02;
+  letter-spacing: 0;
+  line-height: 1.14;
 }
 
 .detail-price {
@@ -4345,6 +4491,13 @@ body:has(.auth-page) .site-footer {
   display: grid;
   min-height: 340px;
   place-items: center;
+}
+
+.loading-page {
+  display: grid;
+  min-height: 70vh;
+  place-items: center;
+  padding: 40px 0;
 }
 
 .loading-tile {

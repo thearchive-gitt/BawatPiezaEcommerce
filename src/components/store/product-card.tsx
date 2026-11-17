@@ -1,8 +1,6 @@
 import Link from "next/link";
-import AddToBagButton from "@/components/store/add-to-bag-button";
 import BuyNowButton from "@/components/store/buy-now-button";
-import ProductStock from "@/components/store/product-stock";
-import { formatPrice, type Product } from "@/data/products";
+import type { Product } from "@/data/products";
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
@@ -20,10 +18,8 @@ export default function ProductCard({ product }: { product: Product }) {
           <p className="product-category">{product.category}</p>
           <h3><Link href={`/shop/${product.id}`}>{product.name}</Link></h3>
         </div>
-        <span className="product-price">{formatPrice(product.price)}</span>
+        <span className="product-price">Quoted after site visit</span>
       </div>
-      <ProductStock productId={product.id} />
-      <AddToBagButton product={product} />
       <BuyNowButton product={product} />
     </article>
   );

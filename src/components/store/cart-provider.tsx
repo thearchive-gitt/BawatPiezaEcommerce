@@ -181,7 +181,7 @@ export default function CartProvider({ children }: { children: React.ReactNode }
       );
     } catch {
       window.setTimeout(
-        () => setStorageMessage("Your bag is available for this visit but could not be saved in this browser."),
+        () => setStorageMessage("Your selections are available for this visit but could not be saved in this browser."),
         0,
       );
     }

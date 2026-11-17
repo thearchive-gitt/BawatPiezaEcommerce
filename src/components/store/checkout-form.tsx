@@ -276,7 +276,7 @@ export default function CheckoutForm() {
   if (items.length === 0) {
     return (
       <div className="checkout-empty">
-        <h2>Your bag is empty.</h2>
+        <h2>No products are selected.</h2>
         <p>Add a tile or a compatible component before checkout.</p>
         <Link className="button button-dark" href="/shop">Browse components <span aria-hidden="true">→</span></Link>
       </div>
@@ -460,7 +460,7 @@ export default function CheckoutForm() {
         {storageMessage && <p className="storage-message" role="status">{storageMessage}</p>}
         {hasUnavailableItems && (
           <p className="auth-status" role="alert">
-            One or more items are out of stock. Remove unavailable items from your bag before placing an order.
+            One or more selected products are out of stock. Remove unavailable products to continue.
           </p>
         )}
         {formError && <p className="auth-status" role="alert">{formError}</p>}

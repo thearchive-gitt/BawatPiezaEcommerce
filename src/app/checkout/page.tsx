@@ -1,23 +1,11 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
-import CheckoutForm from "@/components/store/checkout-form";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Checkout",
-  description: "Review your Bawat Pieza order and enter delivery information.",
+  title: "Site assessment",
+  description: "Request a BawatPieza site assessment before receiving a project quotation.",
 };
 
 export default function CheckoutPage() {
-  return (
-    <main className="page-shell checkout-page">
-      <section className="page-intro checkout-intro">
-        <p className="eyebrow">SECURE YOUR COMPONENTS</p>
-        <h1>Checkout.</h1>
-        <p>Sign in to save your order details and enter your delivery information.</p>
-      </section>
-      <Suspense fallback={<p className="storage-message">Loading checkout...</p>}>
-        <CheckoutForm />
-      </Suspense>
-    </main>
-  );
+  redirect("/assessment");
 }

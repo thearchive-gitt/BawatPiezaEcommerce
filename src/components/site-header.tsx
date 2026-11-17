@@ -4,8 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { LogOut, Settings, ShoppingBag, UserRound } from "lucide-react";
-import { useCart } from "@/components/store/cart-provider";
+import { LogOut, Settings, UserRound } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
 import NotificationsBell from "@/components/notifications-bell";
 
@@ -13,12 +12,10 @@ const links = [
   { label: "Home", href: "/" },
   { label: "Shop", href: "/shop" },
   { label: "Our story", href: "/story" },
-  { label: "Purchase history", href: "/account/orders" },
   { label: "Contact", href: "/contact" },
 ];
 
 export default function SiteHeader() {
-  const { itemCount } = useCart();
   const { user, account, loading, signOut } = useAuth();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -27,6 +24,8 @@ export default function SiteHeader() {
     ? [
         ...links.filter((link) => link.href !== "/"),
         { label: "Account", href: "/account" },
+        { label: "Site assessments", href: "/account/assessments" },
+        { label: "Payments", href: "/account/payments" },
       ]
     : links;
   const accountName = account?.firstname || user?.email?.split("@")[0] || "Account";
@@ -42,7 +41,7 @@ export default function SiteHeader() {
       <div className="announcement">
         <span>ENERGY FROM EVERY STEP</span>
         <span className="announcement-separator" aria-hidden="true">✳</span>
-        <span>FREE DELIVERY ON ORDERS OVER ₱5,000</span>
+        <span>PROJECT QUOTATIONS AFTER SITE ASSESSMENT</span>
       </div>
       <header className="site-header">
         <button
@@ -76,11 +75,11 @@ export default function SiteHeader() {
                 <Link href="/account" onClick={() => setMenuOpen(false)}>
                   Profile &amp; settings
                 </Link>
-                <Link href="/cart" onClick={() => setMenuOpen(false)}>
-                  Your bag ({itemCount})
+                <Link href="/account/assessments" onClick={() => setMenuOpen(false)}>
+                  Site assessments
                 </Link>
-                <Link href="/account/orders" onClick={() => setMenuOpen(false)}>
-                  Purchase history
+                <Link href="/account/payments" onClick={() => setMenuOpen(false)}>
+                  Payments
                 </Link>
                 <button type="button" onClick={() => void handleSignOut()}>Sign out</button>
               </>
@@ -129,20 +128,18 @@ export default function SiteHeader() {
                       Profile &amp; settings
                     </Link>
                     <Link
-                      href="/cart"
+                      href="/account/assessments"
                       role="menuitem"
                       onClick={() => setAccountMenuOpen(false)}
                     >
-                      <ShoppingBag aria-hidden="true" size={16} />
-                      Your bag <span className="account-dropdown-count">{itemCount}</span>
+                      Site assessments
                     </Link>
                     <Link
-                      href="/account/orders"
+                      href="/account/payments"
                       role="menuitem"
                       onClick={() => setAccountMenuOpen(false)}
                     >
-                      <span className="account-dropdown-icon" aria-hidden="true">▤</span>
-                      Purchase history
+                      Payments
                     </Link>
                     <button
                       className="account-dropdown-signout"
@@ -163,10 +160,6 @@ export default function SiteHeader() {
               <Link className="header-signup" href="/signup">Sign up</Link>
             </>
           ))}
-          <Link className="bag-link" href="/cart" aria-label={`Shopping bag, ${itemCount} items`}>
-            <span className="bag-label">Your bag</span>
-            <span className="bag-count">{itemCount}</span>
-          </Link>
         </div>
       </header>
     </>

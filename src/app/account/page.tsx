@@ -131,15 +131,15 @@ export default function AccountPage() {
           <p className="eyebrow">PROFILE &amp; SETTINGS</p>
           <h1>Edit your account.</h1>
           <p className="account-page-intro">
-            Keep your delivery and contact details ready for a faster checkout.
+            Keep your contact details ready for site assessment updates and project quotations.
           </p>
         </div>
       </div>
 
       <nav className="account-page-nav" aria-label="Account navigation">
         <Link className="is-active" href="/account">Profile</Link>
-        <Link href="/account/orders">Purchase history</Link>
-        <Link href="/cart">Your bag</Link>
+        <Link href="/account/assessments">Site assessments</Link>
+        <Link href="/account/payments">Payments</Link>
         <Link href="/contact">Support</Link>
       </nav>
 
@@ -242,8 +242,7 @@ export default function AccountPage() {
       </form>
 
       <div className="account-page-actions">
-        <Link className="button button-outline" href="/cart">View your bag <span aria-hidden="true">→</span></Link>
-        <Link className="button button-outline" href="/account/orders">Purchase history</Link>
+        <Link className="button button-outline" href="/account/assessments">View site assessments</Link>
       </div>
     </main>
   );

@@ -40,7 +40,7 @@ function getPostAuthPath() {
   const redirectTo = new URLSearchParams(window.location.search).get("redirectTo");
   return redirectTo?.startsWith("/") && !redirectTo.startsWith("//")
     ? redirectTo
-    : "/shop";
+    : "/";
 }
 
 export default function AuthForm({ mode }: AuthFormProps) {

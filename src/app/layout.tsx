@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import AuthProvider from "@/components/auth-provider";
-import CartProvider from "@/components/store/cart-provider";
 import SiteFooter from "@/components/site-footer";
 import SiteHeader from "@/components/site-header";
 import ChatWidget from "@/components/store/chat-widget";
@@ -41,12 +40,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" data-scroll-behavior="smooth">
       <body suppressHydrationWarning>
         <AuthProvider>
-          <CartProvider>
-            <SiteHeader />
-            {children}
-            <SiteFooter />
-            <ChatWidget />
-          </CartProvider>
+          <SiteHeader />
+          {children}
+          <SiteFooter />
+          <ChatWidget />
         </AuthProvider>
       </body>
     </html>

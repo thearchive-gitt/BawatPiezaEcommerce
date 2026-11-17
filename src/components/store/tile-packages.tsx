@@ -1,10 +1,5 @@
-"use client";
-
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/components/auth-provider";
-import { useCart } from "@/components/store/cart-provider";
-import { formatPrice, products } from "@/data/products";
+import { products } from "@/data/products";
 
 const tile = products.find((product) => product.id === "kinetic-floor-tile");
 
@@ -31,10 +26,6 @@ const packages = [
 ];
 
 export default function TilePackages() {
-  const { availableStock } = useCart();
-  const { user, loading } = useAuth();
-  const router = useRouter();
-
   if (!tile) return null;
 
   return (
@@ -43,15 +34,12 @@ export default function TilePackages() {
         <p className="eyebrow">CHOOSE YOUR INSTALLATION</p>
         <h2>Start with the right number of tiles.</h2>
         <p>
-          Every package includes the same kinetic floor tile. Choose how much
-          surface area you want to cover, then place the package in your bag.
+          Every package includes the same kinetic floor tile. Choose a reference
+          quantity and request an assessment before the project is quoted.
         </p>
       </div>
       <div className="pricing-grid">
         {packages.map((plan) => {
-          const packagePrice = tile.price * plan.tiles;
-          const canAdd = availableStock(tile.id) >= plan.tiles;
-
           return (
             <article className={`pricing-card${plan.popular ? " pricing-card-popular" : ""}`} key={plan.name}>
               {plan.popular && <span className="pricing-badge">MOST POPULAR</span>}
@@ -59,36 +47,26 @@ export default function TilePackages() {
               <h3>{plan.tiles} {plan.tiles === 1 ? "tile" : "tiles"}</h3>
               <p className="pricing-description">{plan.description}</p>
               <div className="pricing-price">
-                <strong>{formatPrice(packagePrice)}</strong>
-                <span>{formatPrice(tile.price)} per tile</span>
+                <strong>Quoted after assessment</strong>
+                <span>{plan.tiles} reference {plan.tiles === 1 ? "tile" : "tiles"}</span>
               </div>
               <ul className="pricing-features">
                 {plan.features.map((feature) => <li key={feature}><span aria-hidden="true">✓</span>{feature}</li>)}
               </ul>
-              <button
+              <Link
                 className="button button-dark pricing-button"
-                disabled={!canAdd || loading}
-                onClick={() => {
-                  const quantityPath = `/shop/${tile.id}/quantity?quantity=${plan.tiles}`;
-                  router.push(
-                    user
-                      ? quantityPath
-                      : `/login?redirectTo=${encodeURIComponent(quantityPath)}`,
-                  );
-                }}
-                type="button"
+                href={`/assessment?productId=${encodeURIComponent(tile.id)}&quantity=${plan.tiles}`}
               >
-                {canAdd ? "Choose package quantity" : "Package unavailable"}{" "}
+                Request site assessment{" "}
                 <span aria-hidden="true">→</span>
-              </button>
+              </Link>
               <Link className="pricing-detail-link" href="/shop/kinetic-floor-tile">View tile details</Link>
             </article>
           );
         })}
       </div>
       <p className="pricing-note">
-        Package prices are based on the current ₱2,750 tile price. Delivery is
-        free on orders of ₱5,000 or more.
+        Final tile quantities, feasibility, and project pricing are confirmed after the site visit.
       </p>
     </section>
   );

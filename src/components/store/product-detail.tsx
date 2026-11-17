@@ -4,12 +4,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import AddToBagButton from "@/components/store/add-to-bag-button";
 import BuyNowButton from "@/components/store/buy-now-button";
 import ProductGrid from "@/components/store/product-grid";
-import ProductStock from "@/components/store/product-stock";
 import ProductReviews from "@/components/store/product-reviews";
-import { formatPrice, products, type Product } from "@/data/products";
+import { products, type Product } from "@/data/products";
 
 export default function ProductDetail({ product }: { product: Product }) {
   const images = [product.image, ...(product.gallery ?? [])];
@@ -69,13 +67,11 @@ export default function ProductDetail({ product }: { product: Product }) {
         <div className="product-detail-copy">
           <p className="eyebrow">{product.category.toUpperCase()}</p>
           <h1>{product.name}</h1>
-          <p className="detail-price">{formatPrice(product.price)} <span>PHP</span></p>
-          <ProductStock detail productId={product.id} />
+          <p className="detail-price">Project pricing <span>after site assessment</span></p>
           <p className="detail-description">{product.description}</p>
-          <AddToBagButton product={product} />
           <BuyNowButton product={product} />
           <p className="detail-shipping">
-            Secure demo checkout · ₱250 shipping, free on orders over ₱5,000
+            Final project scope and pricing are confirmed after a site assessment.
           </p>
           <div className="specification-section">
             <h2>Technical specifications</h2>

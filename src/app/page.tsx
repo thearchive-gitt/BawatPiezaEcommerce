@@ -2,25 +2,15 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
-import { useAuth } from "@/components/auth-provider";
 import { ShimmeringText } from "@/components/ui/shimmering-text";
 import ProductGrid from "@/components/store/product-grid";
 import TilePackages from "@/components/store/tile-packages";
 import { products } from "@/data/products";
 
 export default function Home() {
-  const router = useRouter();
-  const { user } = useAuth();
   const heroRef = useRef<HTMLElement>(null);
   const heroImageTrackRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (user) {
-      router.replace("/shop");
-    }
-  }, [router, user]);
 
   useEffect(() => {
     const hero = heroRef.current;
@@ -54,10 +44,6 @@ export default function Home() {
       window.removeEventListener("resize", updateHeroProgress);
     };
   }, []);
-
-  if (user) {
-    return null;
-  }
 
   return (
     <main>
