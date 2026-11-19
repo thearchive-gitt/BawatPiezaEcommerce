@@ -14,11 +14,18 @@ const ACTIVE_ASSESSMENT_STATUSES = new Set(["pending", "accepted", "site_assesse
 const inputClass = "mt-1.5 min-h-11 w-full rounded-md border border-[#d6ddd4] bg-white px-3 text-sm text-[#152238]";
 const textareaClass = `${inputClass} min-h-24 py-3`;
 
-type ActiveAssessment = { id: string; status: string };
+type ActiveAssessment = {
+  id: string;
+  status: string;
+  quotation?: Record<string, unknown> | null;
+  balance_payment_status?: string | null;
+};
+type UnpaidProject = { id: string; balance_payment_status?: string | null };
 type AssessmentCheck = {
   userId: string;
   attempt: number;
   activeAssessment: ActiveAssessment | null;
+  unpaidProject: UnpaidProject | null;
   error: string;
 };
 
@@ -42,6 +49,7 @@ export default function SiteAssessmentForm() {
   ));
   const assessmentCheckError = checkingAssessments ? "" : assessmentCheck?.error ?? "";
   const activeAssessment = checkingAssessments ? null : assessmentCheck?.activeAssessment ?? null;
+  const unpaidProject = checkingAssessments ? null : assessmentCheck?.unpaidProject ?? null;
 
   const directProduct = getProduct(searchParams.get("productId") ?? "");
   const parsedQuantity = Number(searchParams.get("quantity"));
@@ -59,10 +67,15 @@ export default function SiteAssessmentForm() {
     async function checkActiveAssessment() {
       try {
         let activeRequest: ActiveAssessment | null;
+        let unpaidProject: UnpaidProject | null = null;
         try {
           const response = await apiFetch("/api/v1/store/assessments/active");
-          const body = (await response.json()) as { activeAssessment: ActiveAssessment | null };
+          const body = (await response.json()) as {
+            activeAssessment: ActiveAssessment | null;
+            unpaidProject?: UnpaidProject | null;
+          };
           activeRequest = body.activeAssessment;
+          unpaidProject = body.unpaidProject ?? null;
         } catch (activeEndpointError) {
           if (!(activeEndpointError instanceof Error && /status 404/i.test(activeEndpointError.message))) {
             throw activeEndpointError;
@@ -71,12 +84,18 @@ export default function SiteAssessmentForm() {
           const body = (await response.json()) as { assessments?: Array<ActiveAssessment> };
           if (!Array.isArray(body.assessments)) throw new Error("The assessment request list could not be read.");
           activeRequest = body.assessments.find((assessment) => ACTIVE_ASSESSMENT_STATUSES.has(assessment.status)) ?? null;
+          unpaidProject = body.assessments.find((assessment) =>
+            assessment.quotation !== null &&
+            assessment.quotation !== undefined &&
+            assessment.balance_payment_status !== "verified",
+          ) ?? null;
         }
         if (active) {
           setAssessmentCheck({
             userId: currentUserId,
             attempt: assessmentCheckAttempt,
             activeAssessment: activeRequest,
+            unpaidProject,
             error: "",
           });
         }
@@ -86,6 +105,7 @@ export default function SiteAssessmentForm() {
             userId: currentUserId,
             attempt: assessmentCheckAttempt,
             activeAssessment: null,
+            unpaidProject: null,
             error: checkError instanceof Error ? checkError.message : "Your active requests could not be checked.",
           });
         }
@@ -201,6 +221,16 @@ export default function SiteAssessmentForm() {
         <h2>We couldn&apos;t check your assessment requests.</h2>
         <p role="alert">{assessmentCheckError}</p>
         <button className="button button-dark" onClick={() => setAssessmentCheckAttempt((attempt) => attempt + 1)} type="button">Try again</button>
+      </section>
+    );
+  }
+  if (unpaidProject) {
+    return (
+      <section className="checkout-empty">
+        <p className="eyebrow">PREVIOUS PROJECT BALANCE REQUIRED</p>
+        <h2>Fully pay your previous project balance first.</h2>
+        <p>Project {unpaidProject.id.slice(0, 8).toUpperCase()} must have its remaining balance paid and verified before you can request another site assessment.</p>
+        <Link className="button button-dark" href="/account/payments">View project payments <span aria-hidden="true">→</span></Link>
       </section>
     );
   }

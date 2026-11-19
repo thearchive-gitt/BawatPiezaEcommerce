@@ -54,11 +54,6 @@ export default function NotificationsPage() {
       <nav className="breadcrumbs" aria-label="Breadcrumb">
         <Link href="/account">Account</Link><span aria-hidden="true">/</span><span aria-current="page">Notifications</span>
       </nav>
-      <section className="page-intro">
-        <p className="eyebrow">ACCOUNT UPDATES</p>
-        <h1>Notifications</h1>
-        <p>Keep track of orders, payments, delivery updates, and support activity.</p>
-      </section>
       <section className="notifications-full-list" aria-label="All notifications">
         {error && <p className="form-error" role="alert">{error}</p>}
         {loading ? <p className="notifications-empty">Loading notifications...</p> : notifications.length === 0 ? (

@@ -10,11 +10,6 @@ export const metadata: Metadata = {
 export default function AccountPaymentsPage() {
   return (
     <main className="page-shell orders-page">
-      <section className="page-intro orders-intro">
-        <p className="eyebrow">YOUR PROJECTS</p>
-        <h1>Project payments.</h1>
-        <p>Submit payment proof and track admin verification for your project quotations.</p>
-      </section>
       <nav aria-label="Account navigation" className="account-page-nav">
         <Link href="/account">Profile</Link>
         <Link href="/account/assessments">Site assessments</Link>

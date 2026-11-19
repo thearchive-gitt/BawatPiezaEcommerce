@@ -9,11 +9,6 @@ export const metadata: Metadata = {
 export default function StoryPage() {
   return (
     <main className="page-shell story-page">
-      <section className="page-intro story-intro">
-        <p className="eyebrow">THE IDEA BEHIND BAWAT PIEZA</p>
-        <h1>Turn everyday<br />movement into energy.</h1>
-        <p>A modular kinetic floor tile, designed as a hands-on energy system.</p>
-      </section>
       <section className="story-feature">
         <div className="story-feature-image" role="img" aria-label="Illustration of the Bawat Pieza kinetic energy tile" />
         <div className="story-feature-copy">

@@ -11,8 +11,9 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",
     "animejs": "^4.5.0",
+    "framer-motion": "^14.14.0",
     "lucide-react": "^1.63.0",
-    "next": "16.4.3",
+    "next": "^16.4.6",
     "psgc-areas": "^1.0.0",
     "react": "19.3.0",
     "react-dom": "19.3.0"

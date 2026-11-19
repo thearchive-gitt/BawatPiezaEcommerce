@@ -1,0 +1,138 @@
+/* IsoTile / HeroTile: camera, 3D primitives and materials (self-contained). */
+
+.iso-scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  perspective: 2400px;
+  perspective-origin: 50% 40%;
+}
+
+.iso-cam {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  transform: translateY(calc(var(--ty, 0) * 1px)) scale3d(var(--s, 0.6), var(--s, 0.6), var(--s, 0.6));
+}
+
+.iso-world {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(70deg) rotateZ(-34deg);
+}
+
+/* ---- layer plumbing ---- */
+.iso-g { transform: translate3d(0, 0, calc(var(--z, 0) * 1px)); }
+.iso-mech { transform: translate3d(0, 0, calc(var(--z, 0) * 1px)) scale3d(1, 1, var(--sq, 1)); }
+.iso-spindle { transform: translate3d(0, 0, calc(var(--zs, 0) * 1px)); }
+.iso-gear { transform: translate3d(-45px, -45px, 110px) rotateZ(calc(var(--rot, 0) * 1deg)); }
+
+.iso-glowwrap { position: absolute; left: 0; top: 0; width: 0; height: 0; transform-style: preserve-3d; }
+.iso-glowwrap .t3-glow { opacity: var(--o, 0); }
+.t3-glow { background: radial-gradient(closest-side, rgb(255 190 120 / 85%), rgb(255 150 70 / 30%) 55%, transparent 100%); }
+
+/* ---- primitives ---- */
+.t3-group,
+.t3-cube {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+}
+
+.t3-plane,
+.t3-gear {
+  position: absolute;
+  left: 0;
+  top: 0;
+  backface-visibility: hidden;
+}
+
+.t3-gear { width: 90px; height: 90px; will-change: transform; }
+
+.t3-gear-under {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #1b1e22 60%, #2c3036 100%);
+}
+
+.t3-f {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  transform-origin: 0 0;
+  backface-visibility: hidden;
+  background-color: var(--c-front);
+  background-image: var(--i-front, none);
+}
+
+.t3-top {
+  background-color: var(--c-top);
+  background-image: var(--i-top, none);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 10%);
+}
+
+.t3-left,
+.t3-right {
+  background-color: var(--c-side);
+  background-image: var(--i-side, none);
+}
+
+.t3-front { box-shadow: inset 0 1px 0 rgb(255 255 255 / 22%), inset 1px 0 0 rgb(255 255 255 / 7%); }
+.t3-left { box-shadow: inset 0 1px 0 rgb(255 255 255 / 14%); }
+.t3-cyl { background-image: linear-gradient(180deg, rgb(255 255 255 / 16%), rgb(255 255 255 / 0%) 42%, rgb(0 0 0 / 28%)); }
+.t3-cap { box-shadow: inset 0 0 0 1px rgb(0 0 0 / 35%); }
+.t3-two { backface-visibility: visible; }
+.t3-shadow { background: radial-gradient(closest-side, rgb(40 6 0 / 62%), rgb(40 6 0 / 26%) 56%, transparent 100%); }
+
+/* ---- materials ---- */
+.m-board { --c-top: #d8d2c6; --c-front: #b9b2a4; --c-side: #c9c2b4; --i-top: linear-gradient(135deg, rgb(255 255 255 / 35%), rgb(0 0 0 / 6%)); }
+.m-sintra { --c-top: #3b3e46; --c-front: #d9d3c6; --c-side: #c8c1b2; --i-top: linear-gradient(125deg, rgb(255 255 255 / 34%), rgb(255 255 255 / 0%) 38%, rgb(255 255 255 / 8%) 66%, rgb(0 0 0 / 20%)); }
+.m-evacream { --c-top: #d9d3c6; --c-front: #cfc8ba; --c-side: #bfb8a9; }
+.m-eva { --c-top: #17191d; --c-front: #0f1013; --c-side: #1a1c21; --i-front: linear-gradient(180deg, rgb(255 255 255 / 6%), rgb(0 0 0 / 30%)); }
+.m-alu { --c-top: #d3d8de; --c-front: #858c95; --c-side: #aab0b8; --i-top: linear-gradient(180deg, rgb(255 255 255 / 35%), rgb(0 0 0 / 10%)); }
+.m-block { --c-top: #4a4f57; --c-front: #23262b; --c-side: #353a41; }
+
+/* ---- dim everything that isn't the current step (opacity on leaf faces so 3D isn't flattened) ---- */
+.iso-scene .t3-f, .iso-scene .t3-plane, .iso-scene .t3-gear { transition: opacity .45s; }
+.iso-scene .is-dim .t3-f,
+.iso-scene .is-dim .t3-plane:not(.t3-glow),
+.iso-scene .is-dim .t3-gear,
+.iso-scene .is-dim.t3-gear,
+.iso-scene .is-dim.t3-plane { opacity: .3; }
+
+/* ---- closed model: dark slate body, black lip, brushed grey top board ---- */
+.m-shell {
+  --c-top: #2a3037;
+  --c-front: #20252b;
+  --c-side: #2c333b;
+  --i-front: linear-gradient(180deg, rgb(255 255 255 / 5%), rgb(0 0 0 / 38%));
+  --i-side: linear-gradient(180deg, rgb(255 255 255 / 7%), rgb(0 0 0 / 22%));
+}
+.m-lip { --c-top: #1b1d22; --c-front: #121316; --c-side: #181a1e; }
+.m-slab {
+  --c-top: #5f6570;
+  --c-front: #30353c;
+  --c-side: #3b4048;
+  --i-top: linear-gradient(112deg, #8b919b 0%, #666c77 38%, #555a64 70%, #4a4f58 100%);
+}
+
+/* crossfade closed shell <-> real layers (opacity on leaf faces so the 3D isn't flattened) */
+.iso-closed .t3-f, .iso-closed .t3-plane { opacity: var(--co, 1); transition: none; }
+.iso-real .t3-f, .iso-real .t3-plane:not(.t3-glow), .iso-real .t3-gear { opacity: var(--ro, 1); }
+.iso-real .is-dim .t3-f,
+.iso-real .is-dim .t3-plane:not(.t3-glow),
+.iso-real .is-dim .t3-gear,
+.iso-real .is-dim.t3-gear,
+.iso-real .is-dim.t3-plane { opacity: calc(var(--ro, 1) * .3); }

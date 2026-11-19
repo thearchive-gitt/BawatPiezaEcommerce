@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { LogOut, Settings, UserRound } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
 import NotificationsBell from "@/components/notifications-bell";
@@ -15,12 +15,24 @@ const links = [
   { label: "Contact", href: "/contact" },
 ];
 
+type HeaderTheme = "light" | "red";
+
+const subscribeToMount = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
+
 export default function SiteHeader() {
   const { user, account, loading, signOut } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
-  const visibleLinks = user
+  const headerRef = useRef<HTMLElement>(null);
+  const [theme, setTheme] = useState<HeaderTheme>("light"); // "red" while a red section is behind the header
+  const mounted = useSyncExternalStore(subscribeToMount, getClientSnapshot, getServerSnapshot);
+  const authReady = mounted && !loading;
+
+  const visibleLinks = authReady && user
     ? [
         ...links.filter((link) => link.href !== "/"),
         { label: "Account", href: "/account" },
@@ -29,6 +41,42 @@ export default function SiteHeader() {
       ]
     : links;
   const accountName = account?.firstname || user?.email?.split("@")[0] || "Account";
+
+  // Header colours follow the section just below it. Sections opt in with data-header-theme="red" | "light"
+  // (anything without the attribute counts as light). Pages can nudge a re-check with window "bp-header-theme".
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    el.dataset.clientReady = "true";
+    window.dispatchEvent(new Event("bp-site-header-ready"));
+    let raf = 0;
+    const measure = () => {
+      raf = 0;
+      const y = Math.min(window.innerHeight - 1, el.getBoundingClientRect().bottom + 2);
+      let next: HeaderTheme = "light";
+      for (const hit of document.elementsFromPoint(window.innerWidth / 2, y)) {
+        const marked = hit.closest<HTMLElement>("[data-header-theme]");
+        if (marked) {
+          next = marked.dataset.headerTheme === "red" ? "red" : "light";
+          break;
+        }
+      }
+      setTheme(next);
+    };
+    const queue = () => {
+      if (!raf) raf = requestAnimationFrame(measure);
+    };
+    measure();
+    window.addEventListener("scroll", queue, { passive: true });
+    window.addEventListener("resize", queue);
+    window.addEventListener("bp-header-theme", queue);
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", queue);
+      window.removeEventListener("resize", queue);
+      window.removeEventListener("bp-header-theme", queue);
+    };
+  }, [pathname]);
 
   async function handleSignOut() {
     await signOut();
@@ -43,7 +91,7 @@ export default function SiteHeader() {
         <span className="announcement-separator" aria-hidden="true">✳</span>
         <span>PROJECT QUOTATIONS AFTER SITE ASSESSMENT</span>
       </div>
-      <header className="site-header">
+      <header className="site-header" data-theme={theme} ref={headerRef}>
         <button
           className="menu-toggle"
           type="button"
@@ -58,18 +106,24 @@ export default function SiteHeader() {
           <span>bawat pieza</span>
         </Link>
         <nav className={`main-nav${menuOpen ? " is-open" : ""}`} aria-label="Main navigation">
-          {visibleLinks.map((link) => (
+          {visibleLinks.map((link) => {
+            const active = link.href === "/"
+              ? pathname === "/"
+              : pathname === link.href || pathname.startsWith(`${link.href}/`);
+            return (
             <Link
               key={link.href}
               href={link.href}
-              className="nav-link"
+              className={`nav-link${active ? " active" : ""}`}
+              aria-current={active ? "page" : undefined}
               onClick={() => setMenuOpen(false)}
             >
               {link.label}
             </Link>
-          ))}
+            );
+          })}
           <div className="mobile-account-links">
-            {loading ? null : user ? (
+            {!authReady ? null : user ? (
               <>
                 <span>Hi, {accountName}</span>
                 <Link href="/account" onClick={() => setMenuOpen(false)}>
@@ -92,7 +146,7 @@ export default function SiteHeader() {
           </div>
         </nav>
         <div className="header-actions">
-          {!loading && (user ? (
+          {authReady && (user ? (
             <>
               <NotificationsBell />
               <div className="account-menu">

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import AuthProvider from "@/components/auth-provider";
 import SiteFooter from "@/components/site-footer";
 import SiteHeader from "@/components/site-header";
@@ -40,7 +41,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" data-scroll-behavior="smooth">
       <body suppressHydrationWarning>
         <AuthProvider>
-          <SiteHeader />
+          <Suspense fallback={<header className="site-header" aria-label="Main navigation" />}>
+            <SiteHeader />
+          </Suspense>
           {children}
           <SiteFooter />
           <ChatWidget />

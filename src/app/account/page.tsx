@@ -129,7 +129,6 @@ export default function AccountPage() {
         </div>
         <div>
           <p className="eyebrow">PROFILE &amp; SETTINGS</p>
-          <h1>Edit your account.</h1>
           <p className="account-page-intro">
             Keep your contact details ready for site assessment updates and project quotations.
           </p>
@@ -137,7 +136,7 @@ export default function AccountPage() {
       </div>
 
       <nav className="account-page-nav" aria-label="Account navigation">
-        <Link className="is-active" href="/account">Profile</Link>
+        <Link aria-current="page" className="is-active" href="/account">Profile</Link>
         <Link href="/account/assessments">Site assessments</Link>
         <Link href="/account/payments">Payments</Link>
         <Link href="/contact">Support</Link>
